@@ -1,10 +1,10 @@
-package mutants
+package main
 
 import (
 	"strings"
 )
 
-func isMutant(dna []string) bool {
+func IsMutant(dna []string) bool {
 	count := 0
 	var n = len(dna)
 	if n < 4 {

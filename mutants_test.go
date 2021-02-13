@@ -1,4 +1,4 @@
-package mutants
+package main
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -98,25 +98,25 @@ func TestCheckDiagonal(t *testing.T) {
 func TestIsMutant(t *testing.T) {
 	t.Run("Check sequences of different letters", func(t *testing.T) {
 		dna := []string{"ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"}
-		ok := isMutant(dna)
+		ok := IsMutant(dna)
 		assert.Equal(t, true, ok)
 	})
 
 	t.Run("Check not mutant", func(t *testing.T) {
 		dna := []string{"ATGCGA", "CGGTGC", "TTATGT", "AGAATG", "TCCCTA", "TCACTG"}
-		ok := isMutant(dna)
+		ok := IsMutant(dna)
 		assert.Equal(t, false, ok)
 	})
 
 	t.Run("Check mutant 3 sequences with overlapping letters", func(t *testing.T) {
 		dna := []string{"ATGCGA", "CGGTGC", "TTATGA", "AGAATA", "TCCCAA", "TCAAAA"}
-		ok := isMutant(dna)
+		ok := IsMutant(dna)
 		assert.Equal(t, true, ok)
 	})
 
 	t.Run("Check mutant two sequences with overlapping letters", func(t *testing.T) {
 		dna := []string{"ATGCGA", "CGGTGC", "TTATGA", "AGACTA", "TCCCAA", "TCAAAA"}
-		ok := isMutant(dna)
+		ok := IsMutant(dna)
 		assert.Equal(t, true, ok)
 	})
 }
