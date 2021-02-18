@@ -14,7 +14,7 @@ func main() {
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	rep := Repository{DB: dynamodb.New(sess)}
+	rep := DynamoRepo{DB: dynamodb.New(sess)}
 
 	controller := new(Controller)
 	controller.DB = rep

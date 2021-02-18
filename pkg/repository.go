@@ -6,35 +6,37 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 )
 
-type Repository struct {
+type Repository interface {
+	SaveDNA(dna Dna) error
+	GetStats() (Stats, error)
+}
+
+type DynamoRepo struct {
 	DB *dynamodb.DynamoDB
 }
 
 type Dna struct {
-	dna *string
+	dna      *string
 	isMutant *bool
 }
 
 type Stats struct {
 	CountMutantsDna int
-	CountTotalDnas int
+	CountTotalDnas  int
 }
 
-func (r Repository) SaveDNA(dna Dna) error {
+func (r DynamoRepo) SaveDNA(dna Dna) error {
 	item := map[string]*dynamodb.AttributeValue{
-		"dna": { S: dna.dna},
-		"isMutant": { BOOL: dna.isMutant},
+		"dna":      {S: dna.dna},
+		"isMutant": {BOOL: dna.isMutant},
 	}
-	tableName := new(string)
-	*tableName = "dnas"
-	input := &dynamodb.PutItemInput{Item: item, TableName: tableName, ReturnValues: aws.String("NONE")}
+	input := &dynamodb.PutItemInput{Item: item, TableName: aws.String("dnas"), ReturnValues: aws.String("NONE")}
 	_, err := r.DB.PutItem(input)
 	return err
 }
 
-func (r Repository) GetStats() (Stats, error){
+func (r DynamoRepo) GetStats() (Stats, error) {
 	filt := expression.Name("isMutant").Equal(expression.Value(true))
-
 	expr, err := expression.NewBuilder().WithFilter(filt).Build()
 	if err != nil {
 		return Stats{}, err
@@ -48,7 +50,7 @@ func (r Repository) GetStats() (Stats, error){
 	result, err := r.DB.Scan(params)
 	stats := Stats{
 		CountMutantsDna: int(*result.Count),
-		CountTotalDnas: int(*result.ScannedCount),
+		CountTotalDnas:  int(*result.ScannedCount),
 	}
 	return stats, err
 }

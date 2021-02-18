@@ -2,12 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"strings"
-
-	//"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/aws"
 	"io/ioutil"
-	//"log"
 	"net/http"
+	"strings"
 )
 
 type Controller struct {
@@ -19,9 +17,9 @@ type DnaRequest struct {
 }
 
 type StatsResponse struct {
-	CountMutantDna int `json:"count_mutant_dna"`
-	CountHumanDna int `json:"count_human_dna"`
-	Ratio float32 `json:"ratio"`
+	CountMutantDna int     `json:"count_mutant_dna"`
+	CountHumanDna  int     `json:"count_human_dna"`
+	Ratio          float32 `json:"ratio"`
 }
 
 func (c Controller) VerifyDNA(w http.ResponseWriter, r *http.Request) {
@@ -45,11 +43,7 @@ func (c Controller) VerifyDNA(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ok := IsMutant(dna.Dna)
-	dnaKey := new(string)
-	*dnaKey = strings.Join(dna.Dna, "")
-	isMutant := new(bool)
-	*isMutant = ok
-	err = c.DB.SaveDNA(Dna{dna: dnaKey, isMutant: isMutant})
+	err = c.DB.SaveDNA(Dna{dna: aws.String(strings.Join(dna.Dna, "")), isMutant: aws.Bool(ok)})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -72,8 +66,8 @@ func (c Controller) GetStats(w http.ResponseWriter, r *http.Request) {
 	countHumansDna := queryResponse.CountTotalDnas - queryResponse.CountMutantsDna
 	response := StatsResponse{
 		CountMutantDna: queryResponse.CountMutantsDna,
-		CountHumanDna: countHumansDna,
-		Ratio: float32(countHumansDna / queryResponse.CountMutantsDna),
+		CountHumanDna:  countHumansDna,
+		Ratio:          float32(queryResponse.CountMutantsDna) / float32(countHumansDna),
 	}
 	json, err := json.Marshal(response)
 	if err != nil {
