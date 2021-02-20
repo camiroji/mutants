@@ -1,11 +1,11 @@
 # mutants
 Mutants challenge
 
-La API se encuentra publicada en 3.89.20.240 en el puerto 8000
+La API fue pullicada usando Elastic Beanstalk
 
 Enpoints: 
 
- - POST http://18.206.244.132:8000/mutant/
+ - POST http://mutantsapp.eba-g5bpzkhv.us-east-1.elasticbeanstalk.com/mutant/
  
     Devuelve si un adn pertenece a un mutante o no
 
@@ -17,7 +17,7 @@ Enpoints:
     
     En el caso de verificar un mutante retorna HTTP 200-OK y en el caso contrario 403-Forbidden
 
-- GET http://18.206.244.132:8000/stats
+- GET http://mutantsapp.eba-g5bpzkhv.us-east-1.elasticbeanstalk.com/stats
 
     Retorna las estadísitcas de las verificaciones de ADN
     
